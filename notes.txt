@@ -1,0 +1,146 @@
+CHAPTER 2:
+
+Creating a Controller:
+
+in <script>:
+(previously defined:
+var todoApp = angular.module("todoApp", []);
+)
+
+todoApp.controller("ToDoCtrl", function($scope){
+	$scope.todo = model;
+});
+
+in <body>:
+<body ng-controller="ToDoCtrl">
+
+* $ used in built-in features of AngularJS; usually a service that provides features to multiple controllers
+* $scope - used to expose data and functionality to views
+* $scope.todo - defines a todo property on the $scope service object
+* adding ng-controller attribute to the <body> tag means that the controller will be responsible for that entire section of HTML
+
+Creating a View:
+
+* can use data binding: double-braces {{...}}, e.g., todo.user, todo.items, ...
+* access limited to $scope
+* expressions can be used in data bindings ({{todo.items.length}}; avoid complicated expressions, put that logic in the controller instead
+
+* ng-repeat (aka repeater) is a "directive" to iterate through a set of objects, e.g.:
+				<tr ng-repeat="item in todo.items">
+					<td>{{item.action}}</td>
+					<td><input type="checkbox" ng-model="item.done" /></td>
+					<td>{{item.done}}</td>
+				</tr>
+				
+* ng-model provides two-way model binding: values changed by user are stored in the model:
+ 	<td><input type="checkbox" ng-model="item.done" /></td>
+ 
+ Creating and Using Controller Behaviors:
+ 
+ * behaviors - controller functions that operate on the data model to implement the business logic of the application
+ * e.g., can calculate something for custom-display in the view (incompleteCount)
+ * angular.forEach(list, [action]) - enumerator of elements in a list
+ 
+ * ng-hide - one of directives to manipulate the browser DOM based on the state of AngulasJS model (hide the label if expr is true)
+ 
+ * behaviors can depend on other behaviors (call them inside their body?)
+ 
+ * ng-class - another AngularJS directive to apply CSS class to a control(?)
+ * can use multiple directives in one <span> (e.g., ng-class, ng-hide)
+  
+Responding to User Interaction:
+
+* via behaviors and directives
+* ng-model directive can add a new (dynamic) property that has not been defined before, for user interaction
+* ng-click sets up event handler (using behavior function) for click action
+
+Filtering and Ordering Model Data:
+
+Ex: <tr ng-repeat="item in todo.items | filter: {done: false} | orderBy: 'action'">
+* filter: {criteria} - selects items for which criteria are met (e.g., {done: false})
+* orderBy: property - order items by property values, ascending (if property is not defined by the scope, must use string literal: 'property')
+
+* Better filtering: filter method of AngularJS model object
+	- used to create a filter factory which returns a function that is used to filter a set of data objects.
+	- aka, using the filter method requires passing in a function that returns a function that returns the filtered data
+
+>> DON'T UNDERSTAND how the items are passed in with the syntax:
+	<tr ng-repeat="item in todo.items | checkedItems:showComplete | orderBy: 'action'">
+
+Getting the Data via Ajax:
+
+* run - method defined in AngularJS module object; takes a function that is executed once AngularJS has performed its initial setup
+* $http as argument - tells AngularJS to use the $http service (dependency injection)
+* $http - service that provides access to low-level Ajax requests
+* $http.get - method to make HTTP GET request (RESTful interface?) to the server for the JSON file
+	$http.get("todo.json").success(function(data){
+				model.items = data;
+	});
+	- get - returns a 'promise' - will come in the future when completed
+	- [promise].success - takes a function invoked when request completed; data -> JSON stuff parsed and turned into a JavaScript object
+	- that JS object ('data') is assigned to model.items
+
+CHAPTER 3
+
+* 2 kinds of Web applications: round-trip & single-page
+* round-trip:
+	- whole page submitted at once
+	- user action would cause the page to fully reload (sent a completely new HTML doc)
+	- logic and data reside on the server
+	- still a lot of them around: require very little from browser -> widest client support
+	- flaws:
+		>> user waits while HTML doc requested & loaded
+		>> large server infrastructure to process requests & manage state
+		>> require a lot of bandwidth
+* single-page:
+	- initial HTML doc sent once to browser, never reloaded or replaced
+	- user interactions cause Ajax requests for smaller HTML fragments or data
+* AngularJs better suited for s-p applications, and complex r-t applications (jQuery good for r-t & simpler)
+* jQuery:
+	- explicitly manipulate browser's DOM
+	- fluid API (?)
+	- core library easy to extend
+* AngularJS:
+	- builds on the core functionality of jQuery (contains a cut-down version jqLite)
+	- drawback: up-front investment before you see results
+	- AngularJS is a client-side MVC framework	
+
+Model (in MVC):
+* data that users work with
+* view models - represent just data passed from controller to view
+* domain models - contain data in a business domain, with all operations, transformations and rules for CREATING, STORING & MANIPULATING that data (aka model logic)
+* CRUD -> Create, Read, Updare & Delete operations
+
+Controller (in MVC):
+* conduit between model & view(s)
+* adds business domain logic (aka 'behaviors') to model's 'scopes'
+* able to initiate, present data from & update (based on user interactions) scope
+* can create 'view data' (aka 'view model data' aka 'view models')
+	- simplify the definition of views
+	- non-persistent
+	- usually created and accessed via controller's scope
+	
+View (in MVC):
+* contain the logic & markup to present data to user
+* should NOT contain complex logic (belongs in controller)
+* should NOT contain logic that creates, stores or manipulates the domain model
+
+RESTful Service:
+* web service that provides CRUD functionality
+* operations expressed through a combination of URL & HTTP method
+* Methods:
+	- GET - Retrieves the data object specified by the URL
+	- PUT - Updates ...
+	- POST - Creates a new data object
+	- DELETE - Deletes ...
+	
+To avoid putting logic in the wrong place:
+* View logic should prepare data only for display and never modify the model
+* Controller logic should never directly create, update or delete data from the model
+* The client should never directly access the data store
+ 
+
+
+Controller
+
+ 
