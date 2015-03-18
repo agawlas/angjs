@@ -139,8 +139,120 @@ To avoid putting logic in the wrong place:
 * Controller logic should never directly create, update or delete data from the model
 * The client should never directly access the data store
  
+CHAPTER 4
+HTML and Bootstrap CSS Primer
 
+HTML Document Structure:
+<!DOCTYPE html>
+<html>
+	<head>
+		... head content (metadata)
+	</head>
+	<body>
+		... body content
+	</body>
+</html>
 
-Controller
+Other elements:
 
- 
+button - button, for user interaction
+div - generic element; adds structure
+h1 - top-level header
+input - field to get a single data item from user
+link - imports content to html
+	ex: <link href="bootstrap.css" rel="stylesheet" />
+	attributes: href - content to import, rel - content type
+script - script to be executed as part of the document (typically JS)
+span - generic element; adds structure
+style - region of CSS settings
+table - table (rows & columns)
+tbody - table body
+td - table data (cell)
+th - header cell in a table row
+thead - table header
+tr - table row
+title - document title, used for window/tab title in the browser
+
+BOOTSTRAP
+Basic Bootstrap Classes:
+
+panel - panel with a rounded border. Can have header and footer.
+panel-heading - heading for a panel
+btn - button
+	ex: <button class="btn">Basic Button</button>
+well - groups elements with an inset effect
+
+Content & Size Classes (used with basic class, e.g., btn)
+
+* btn-primary, btn-success, btn-warning, btn-info, btn-danger
+* btn-large, btn-small
+* btn-block - fits available horizontal space
+ex: <button class="btn btn-block btn-warning">Standard Block Warning</button>
+
+Table Styles:
+
+table - basic table styling
+table-striped - alternate row striping
+table-hover - different row style when a mouse hovers over a row
+table-condensed - reduced spacing (more compact layout)
+
+* content styling can be applied to rows or even cells:
+	<tr class="success"><td>United Kingdom</td><td>London</td></tr>
+	<tr class="danger"><td>France</td><td>Paris</td></tr>
+	<tr><td>Spain</td><td class="warning">Madrid</td></tr>
+
+Forms in Bootstrap:
+
+* form-group - groups elements together, e.g., label & input box (form-control):
+	<div class="form-group">
+		<label>Name:</label>
+		<input name="name" class="form-control" />
+	</div>
+* form-control - input field like a textbox
+* radio - radio button (not sure if this is Bootstrap or generic)
+	ex: <div class="radio">
+			<label>
+				<input type="radio" name="junkmail" value="yes" checked />
+				Yes, send me endless junk mail
+			</label>
+		</div>
+		<div class="radio">
+			<label>
+				<input type="radio" name="junkmail" value="no" />
+				No, I never want to hear from you again
+			</label>
+		</div>
+	Q: Does the same name ("junkmail") put them in the same group and mutually exclusive?
+* checkbox - checkbox (not sure if this is Bootstrap or generic)
+	ex: <div class="checkbox">
+			<label>
+				<input type="checkbox" />
+				I agree to terms and conditions.
+			</label>
+		</div>
+		
+Grids in Bootstrap:
+
+* based on 12-column rows
+* assign "width" to columns like this: <div class="col-xs-1">column content</div>
+* ex:
+		<div id="gridContainer">
+			<div class="row grid-row">
+				<div class="col-xs-12">aaa</div>
+			</div>
+			<div class="row grid-row">
+				<div class="col-xs-6">bbb</div>
+				<div class="col-xs-6">ccc</div>
+			</div>
+		</div>
+* sometimes grids impossible to render properly in browser (if no support for CSS3); then ok to use tables.
+
+Responsive Grids:
+
+* stack grid cells vertically if screen width < xxx pxls.
+* use these Bootstrap classes:
+	- col-sm-* - vert if screen width <= 768 px
+	- col-md-* - 940 px
+	- col-lg-* - 1170 px
+* need a "meta" tag to tell mobile browsers to display the content actual size:
+	<meta name="viewport" content="width=device-width, initial-scale=1"> 
