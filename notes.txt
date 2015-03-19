@@ -426,3 +426,8 @@ JS primer
 				console.log(jsonStr);
 				$scope.todos = angular.fromJson(jsonStr);
 			});
+
+CHAPTER 6
+Sportstore1
+
+* 
