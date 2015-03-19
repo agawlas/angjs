@@ -255,4 +255,174 @@ Responsive Grids:
 	- col-md-* - 940 px
 	- col-lg-* - 1170 px
 * need a "meta" tag to tell mobile browsers to display the content actual size:
-	<meta name="viewport" content="width=device-width, initial-scale=1"> 
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	
+CHAPTER 5
+JS primer
+
+* angular.isFunction(obj) - checks if ob is a function
+	angular is a global object created automatically when angular.js is added to HTML:
+	<script src="angular.js"></script>
+
+* vars declared in script (not inside a function) are global and can be accessed anywhere, including other scripts within the same HTML doc.
+	- don't use global vars!
+
+* AngularJS utility methods for string:
+	- angular.isString(object)
+	- angular.lowercase(string)
+	- angular.uppercase(string)
+
+* Creating objects:
+	- with 'new':
+		var obj = new Object();
+		obj.name = "Adam";
+		obj.weather = "sunny";
+		
+	- with object litersl:
+		var obj = {
+			name: "Adam",
+			weather: "sunny"
+		};
+	-> object properties can be added AFTER object is created!
+	-> accessing properties:
+		- obj.name, obj.weather
+		- obj["name"], obj["weather"]
+		- var prop = "weather"; obj[prop] = ...
+	-> checking for properties - use 'in':
+		var hasName = "name" in obj; 
+
+* Adding functions to objects:
+	var obj = {
+		name: "Adam",
+		weather: "sunny",
+		printMessages: function(){
+			console.log("Hello " + this.name + ".");
+			console.log("Today is " + this.weather + ".");
+		};
+	};
+	obj.printMessages();
+	-> to access object's properties from within a function, use 'this.'!
+	
+* Extending objects:
+	copies all the 'base' object's properties to the extended object
+	var obj = {
+		name: "Adam",
+		weather: "sunny",
+		printMessages: function(){
+			console.log("Hello " + this.name + ".");
+			console.log("Today is " + this.weather + ".");
+		};
+	};
+	var extObj = {
+		city: "London"
+	};
+	angular.extend(extObj, obj);	// now extObj has name, weather and printMessages, too!
+	-> angular.extend preserves all properties and methods of the target object (extObj)
+	-> angular.copy creates a copy of original object (obj) without preserving target's props
+	
+* Detecting objects: angular.isObject(arg)
+	-> returns false for functions
+	
+* Enumerating properties:
+	for (var prop in obj){
+		console.log("Name: " + prop + " Value: " + obj[prop]);
+	}
+	
+	or, with AngularJS:
+	angular.foreach(obj, function(value, key){
+		console.log("Name: " + key + " Value: " + value); 
+	});
+	-> will produce the same result!
+	-> will include functions in a=enumeration!
+
+* Adding/deleting object properties:
+	- add - just use it:
+	obj.newProp = "aaa";
+	(or obj["newProp"] = "aaa";
+	obj.sanHello = function(){
+		console.write("Hello");
+	};
+	- delete - use 'delete':
+	delete obj.newProp;
+	delete obj["name"];
+	delete obj.sayHello;
+	
+* string concatenation (+) has higher precedence than addition (+):
+	var one = 5 + 5;	-> 10
+	var two = 5 + "5";	-> 55
+	
+* Converting numbers to strings:
+	- (5).toString()	-> base 10
+	- String(5)
+	Also these are available:
+	- toString(2), toString(8),...
+	- toFixed(n)	- real number with n decimal digits
+	- toExponential(n) - number in exp form, 1 digit before the decimal point & n digits after
+	- toPrecision(n) - number with n significant digits, using exp notation if needed
+
+* Converting strings to numbers:
+	- Number(str)
+	- parseInt(str)
+	- parseFloat(str)
+	
+* Arrays:
+	- create:	var arr = new Array();// or var arr = [];
+				arr[0] = 100;
+				arr[1] = "aaa";
+				arr[2] = false;
+		or use array literal:
+			var arr = [100, "aaa", false];
+	- detect: angular.isArray(arg)
+	- enumerating:
+		for (var i=0; i < arr.length; i++){
+			console.log("Index: " + i + ": " + arr[i]);
+		}
+		OR:
+		angular.foreach(arr, function(value, key){
+			console.log(key + ": " + value);
+		});
+		-> in this case, key is not necessaily an "index", e.g., if the array has holes (?)
+	- built-in methods:
+		> concat(anotherArray) returns concatenated Array
+		> join(separator) returns string of separator-delimited array elements
+		> pop() removes last item from array and returns it
+		> push(item) appends item to array
+		> reverse() reverses the array (in place!)
+		> shift() removes first object from array and returns it
+		> slice(start,end) returns a section of array
+			start, end indexed from 0;
+			start included, end excluded
+		> sort() (in place!)
+		> splice(index,count) removes count items from array, starting at index
+		> upshift(item) inserts item at the start of array
+
+* null & undefined:
+	- not the same (undefined is a type, null is a value)
+	- both falsy 
+	- checking if something is null or undefined (don't care which):
+		if (!obj.prop)
+	- for undefined -> angular.isDefined / angular.isUndefined
+
+* Promises:
+	- promise - represents an item of work that will be performed asynchronously and completed in the future
+	- most common - when making Ajax requests
+	- promise is used to notify the application when the request has completed
+	- 	var promise = $http.get("todo.json");
+		promise.success(function(data){
+			$scope.todos = data;
+		});
+	- promise object has 3 methods:
+		> success(callback) - callback invoked when work was successful; receives returned data
+		> error(callback) - callback invoked when work could not be completed; receives problem details
+		> then(success, error) - callbacks for success and failure
+		
+* JSON (JavaScript Object Notation)
+	- data format for web apps
+	- supported types: String, Nymber, Boolean, ARray, Object, null
+	- AngularJS support: angular.toJson, angular.fromJson
+	- ex:	var myApp = angular.module("demo", []);
+			myApp.controller("demoCtrl", function($scope, $http){
+				var jsonStr = angular.toJson(data);
+				console.log(jsonStr);
+				$scope.todos = angular.fromJson(jsonStr);
+			});
