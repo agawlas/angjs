@@ -32,6 +32,7 @@ angular.module("customFilters", [])
 			}
 		}
 		else{
+			//console.log("range filter: returning all data");
 			return data;
 		}
 	};

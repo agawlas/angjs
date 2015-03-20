@@ -1,4 +1,18 @@
 angular.module("sportsStore")	// no ,[] as second arg means "locate this module" instead of "create a module"
+.constant("dataUrl", "http://localhost:5500/products")
+.controller("sportsStoreCtrl", function($scope, $http, dataUrl) {
+	$scope.data = {};
+	$http.get(dataUrl)
+		.success(function(data){
+			$scope.data.products = data;
+		})
+		.error(function(error){
+			$scope.data.error = error; 
+		});
+});
+
+/* dummy data version:
+angular.module("sportsStore")	// no ,[] as second arg means "locate this module" instead of "create a module"
 .controller("sportsStoreCtrl", function($scope) {
 	$scope.data = {
 		products: [
@@ -9,3 +23,4 @@ angular.module("sportsStore")	// no ,[] as second arg means "locate this module"
 		]
 	};
 });
+*/
