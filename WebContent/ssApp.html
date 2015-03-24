@@ -7,13 +7,33 @@
     <link href="bootstrap.css" rel="stylesheet" />
     <link href="bootstrap-theme.css" rel="stylesheet" />
     <script>
-    	angular.module("sportsStore", ["customFilters", "cart"]);
-		// declared a dependency on "customFilters" and "cart" modules
+    	angular.module("sportsStore", ["customFilters", "cart", "ngRoute"])
+		// declared a dependency on "customFilters" and "cart" modules (and ngRoute for URL routing?)
+		// here is the URL routing definition:
+		.config(function($routeProvider){
+			$routeProvider.when("/complete", {
+				templateUrl: "/views/thankYou.html"
+			});
+			$routeProvider.when("/placeorder", {
+				templateUrl: "/views/placeOrder.html"
+			});
+			$routeProvider.when("/checkout", {
+				templateUrl: "/views/checkoutSummary.html"
+			});
+			$routeProvider.when("/products", {
+				templateUrl: "/views/productList.html"
+			});
+			$routeProvider.otherwise({
+				templateUrl: "/views/productList.html"
+			});
+		});
     </script>
     <script src="controllers/sportsStore.js"></script>
     <script src="filters/customFilters.js"></script>
     <script src="controllers/productListControllers.js"></script>
     <script src="components/cart/cart.js"></script>
+    <script src="ngmodules/angular-route.js"></script>
+    <script src="controllers/checkoutControllers.js"></script>
 </head>
 
 <body ng-controller="sportsStoreCtrl">
@@ -28,7 +48,10 @@
 	</div>
 	
 	<!-- Including a "partial view" to make code less complicated: -->
-	<ng-include src="'views/productList.html'"></ng-include>
+	<!-- <ng-include src="'views/productList.html'"></ng-include> -->
 	<!-- (had to use single quotes do that the directive knows it's not a scope property -->
+	<!-- the above was replaced by this: -->
+	<ng-view />
+	<!-- I don't get it but it's a directive defined in ngRoure module of angular-route.js that tells where to display the view that the URL rouring selected (?) -->
 </body>
 </html>

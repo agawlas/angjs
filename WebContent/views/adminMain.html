@@ -1,0 +1,13 @@
+<div class="panel panel-default row" ng-controller="mainCtrl">
+	<!-- define a button on the left and click action for each of the views (Products/Orders -->
+	<div class="col-xs-3 panel-body">
+		<a ng-repeat="item in screens" class="btn btn-block btn-default"
+			ng-class="{'btn-primary': item == current }" ng-click="setScreen($index)">
+			{{item}}
+		</a>
+	</div>
+	<!-- right-side of screen, in response to button click above shows appropriate view -->
+	<div class="col-xs-8 panel-body">
+		<div ng-include="getScreen()" />
+	</div>
+</div>

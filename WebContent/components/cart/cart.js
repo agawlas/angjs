@@ -3,7 +3,7 @@ angular.module("cart", [])
 	var cartData = [];	// local, not accessible from outside
 	// will return an object with 3 methods
 	return{
-		addProduct: function(id,name, price){
+		addProduct: function(id, name, price){
 			var addedToExistingItem = false;
 			for (var i=0; i < cartData.length; i++){
 				if (cartData[i].id == id){
@@ -13,7 +13,7 @@ angular.module("cart", [])
 				}
 			}
 			if (!addedToExistingItem){
-				cartData.Push({count: 1, id: id, price: price, name: name});
+				cartData.push({count: 1, id: id, price: price, name: name});
 			}
 		},
 		removeProduct: function(id){
