@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html ng-app="exampleApp">
+<head>
+	<meta charset="ISO-8859-1">
+	<title>AngularJS Demo</title>
+    <link href="bootstrap.css" rel="stylesheet" />
+    <link href="bootstrap-theme.css" rel="stylesheet" />
+    <script src="angular.js"></script>
+    <!-- adding sub-modules: -->
+    <script src="controllers/exAppControllers.js"></script>
+    <script src="filters/exAppFilters.js"></script>
+    <script>
+    	var myApp = angular.module("exampleApp", ["exampleApp.Controllers",
+    	                                          "exampleApp.Filters",
+    	                                          "exampleApp.Directives",
+    	                                          "exampleApp.Services"]);
+    	
+    	var now = new Date();
+    	myApp.value("nowValue", now);	// defines 'value service'
+    	
+    	/* before filter defined:
+    	myApp.controller("dayCtrl", function($scope){
+    		var  dayNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+    		$scope.day = dayNames[new Date().getDay()];
+    	});
+    	myApp.controller("tomorrowCtrl", function($scope){
+    		var  dayNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+    		$scope.day = dayNames[(new Date().getDay()+1)%7]; 
+    	});
+    	myApp.directive("highlight", function(){
+    		return function(scope, element, attrs){
+    			if (scope.day == attrs["highlight"]){
+    				element.css("color", "red");
+    			}
+    		}
+    	});
+    	*/
+    	/*
+    	// after filter defined, before service defined:
+    	myApp.controller("dayCtrl", function($scope){
+    		$scope.day = new Date().getDay();
+    	});
+    	myApp.controller("tomorrowCtrl", function($scope){
+    		$scope.day = new Date().getDay() + 1; 
+    	});
+    	*/
+    	/* removed after controllers and filters moved to separate .js files:
+    	// after filter AND service defined:
+    	myApp.controller("dayCtrl", function($scope, days){	// days is a dependency injection (DI)
+    		$scope.day = days.today;
+    	});
+    	myApp.controller("tomorrowCtrl", function($scope, days){	// days is a DI
+    		$scope.day = days.tomorrow; 
+    	});
+    	myApp.filter("dayName", function(){
+    		var  dayNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+    		return function(input){
+    			return angular.isNumber(input) ? dayNames[input] : input;
+    		};
+    	});
+    	*/
+    	// defining Directives sub-module:
+    	angular.module("exampleApp.Directives", [])
+    	.directive("highlight", function($filter){
+    		// will use filter ro change scope.day from number to day name as string 
+    		var dayFilter = $filter("dayName");
+    		return function(scope, element, attrs){
+    			if (dayFilter(scope.day) == attrs["highlight"]){
+    				element.css("color", "blue");
+    			}
+    		}
+    	});
+
+    	/* before defining nowValue:
+    	myApp.service("days", function(){
+    		this.today = new Date().getDay();
+    		this.tomorrow = this.today + 1;
+    	});
+    	*/
+    	// after nowValue:
+    	// defining Services sub-module:
+    	angular.module("exampleApp.Services", [])
+    	.service("days", function(nowValue){
+    		this.today = nowValue.getDay();
+    		this.tomorrow = this.today + 1;
+    	});	
+    </script>	
+</head>
+<body>
+	<div class="panel">
+		<div class="page-header">
+			<h3>AngularJS App</h3>
+		</div>
+		<h4 ng-controller="dayCtrl" highlight="Thursday">
+			Today is {{day || "(unknown)" | dayName}}
+			<!-- || means if day undefined/null, use "unknown" -->
+			<!-- day or "unknown" are passed as input to the 'dayName' filter -->
+		</h4>
+		<h4 ng-controller="tomorrowCtrl">Tomorrow is {{day || "(unknown)" | dayName}}</h4>
+	</div>
+</body>
+</html>

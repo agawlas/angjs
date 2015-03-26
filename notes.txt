@@ -427,7 +427,150 @@ JS primer
 				$scope.todos = angular.fromJson(jsonStr);
 			});
 
-CHAPTER 6
-Sportstore1
+CHAPTER 9
+The Anatomy od an AngularJS App
 
-* 
+* AngularJS apps follow MVC pattern (model/view/controller are the main building blocks)
+* but, there are many components:
+	- modules
+	- directives
+	- filters
+	- factories
+	- services
+	
+* When to use components:
+	- create AngJS module				angular.module method
+	- set scope of module				ng-app attribute
+	- define controller					Module.controller method
+	- apply controller to view			ng-controller attribute
+	- pass data from ctrl to view		$scope service
+	- define directive					Module.directive method
+	- define filter						Module.filter method
+	- use filter programmatically		$filter service
+	- define service					Module.service, Module.factory or Module.provider method
+	- define service from existing obj or val		Module.value method
+	- add strusture to code in app		create mult modules & declare dependencies from the module referenced by ng-app attribute
+	- register functions called when module loaded	Module.config, Module.run methods
+
+* Modules
+	- top-level components
+	- to create, in JavaSctipt (<script>) call: 
+		angular.module(name, requires, config)
+		> name - module name
+		> requires - list of modules that the created module depends on
+		> config - configuraion of the module (equivalent to Module.config method); optional?
+	- must apply the module to HTML content with ng-app directive, usually here:
+		<html ng-app="exampleApp">
+	- Module members:
+		> animation(name, factory			supports animation feature (?)
+		> config(callback)					registers fn to configure module when it's loaded
+		> constant(key, value)				defines service that returns constant value
+		> controller(name, constructor)		creates controller
+		> directive(name, factory)			creates directive, to extend standard HTML
+		> factory(name, provider)			creates service
+		> filter(name, factory)				creates filter do format data for display
+		> provider(name, type)				creates service
+		> name								returns module name
+		> run(callback)						registers fn invoked after AngularJS has loaded and config'd all modules
+		> service(name, constructor)		creates service
+		> value(name, value)				defines service that returns constant value
+		
+* Controllers
+	- to create: call:
+		Module.controller(name, constructor)
+		> name - controller name
+		> constructor - factory function to set up controller's actions;
+			also: used to declare controller's dependencies (Dependency Injection)
+		ex: myApp.controller("dayCtrl", function($scope){
+    			// controller stuff
+    		});
+    	this controller depends on $scope component
+    - must be applied to HTML elements with ng-controller directive:
+    	<div class="panel" ng-controller="dayCtrl">
+    	...
+    	</div>
+    	Only data defined in the controller's $scope can be used inside the <div> block (which defines the 'view')
+    - can be applied to multiple views if desired	
+    	
+ * Dependency Injection (DI)
+ 	changes the purpose of fn arguments:
+ 		- without DI, args 'receive" objects passed by caller; 
+ 		- with DI, the fn uses args to demand stuff -> tell AngularJS what it needs
+ 		
+ * Fluent API: multiple calls to methodc are "chained" together:
+ 	<script>
+ 		angular.module("exampleApp", [])
+ 			.controller("ctrl1", function($scope){
+ 				...
+ 			})
+ 			.controller("ctrl2", function($scope){
+ 				...
+ 			})
+ 			.directive("dir1", function(){
+ 				...
+ 			});
+ 	</script>
+ 	
+ * Directives
+ 	- extend & enhance HTML
+ 	- to create, call:
+ 		Module.directive(name, factory)
+ 		> name - directive name
+ 		> factory fn (often returns a 'worker' fn, as in this example:
+	 		myApp.directive("highlight", function(){		// factory
+	    		return function(scope, element, attrs){		// worker
+	    			if (scope.day == attrs["highlight"]){
+	    				element.css("color", "red");
+	    			}
+	    		}
+	    	});
+	    (there are other ways)
+	- applied as attribute:
+		<h4 ng-controller="dayCtrl" highlight="Thursday">
+		(there are other ways)
+	
+ * Filters
+ 	- used in views to format data displayed to user
+ 	- to create, call:
+ 		Module.filter(name, factory)
+ 	- applied in template expressions in views (data binding expr): bar (|) followed by filter name
+ 		Today is {{day || "(unknown)" | dayName}}
+ 		day or "unknown" are passed as input to the 'dayName' filter
+ 
+ * Services
+ 	- singleton objects that provide custom functionality throughout application
+ 	- examples of built-in services: $scope, $filter
+ 	- created with service, factory or provider methods of Module object
+ 		myApp.service("days", function(){
+    		this.today = new Date().getDay();
+    		this.tomorrow = this.today + 1;
+    	});
+  
+  * Defining Values
+  	- Module.value method:
+  		var now = new Date();
+  		myApp.value("nowValue", now);
+  	- can be used as Data Injection:
+  		myApp.service("days", function(nowValue) {...
+ 	- odd but useful?
+ 	
+ * Using Modules to Organize Code
+ 	- good way to divide functionality
+ 	- need to put "helper" modules in the dependency list ([]) of main module
+ 	- order not importand, AngularJS will resolve the dependencies properly
+ 	- can be defined in separate .js files and included with <script src="filename"></script>, OR
+ 		in the same file as the main application module
+ 	
+ * Module Life Cycle
+ 	- Module.config: arg is a function invoked after the module has been loaded
+ 	- Module.run: arg is a function invoked after ALL modules have been loaded
+ 	- ex: 	.config(function(){
+ 				console.log("Config called");
+ 			})
+ 			.run(function(){
+ 				console.log("Run called");
+ 			});
+ 	- any module can have these (main and sub)
+ 		> subs' config will execute before main's config;
+ 		> subs' run will execute after all configs but before main's run
+ 		(generally, in order of loading)
