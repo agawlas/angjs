@@ -428,7 +428,7 @@ JS primer
 			});
 
 CHAPTER 9
-The Anatomy od an AngularJS App
+The Anatomy of an AngularJS App
 
 * AngularJS apps follow MVC pattern (model/view/controller are the main building blocks)
 * but, there are many components:
@@ -492,12 +492,12 @@ The Anatomy od an AngularJS App
     	Only data defined in the controller's $scope can be used inside the <div> block (which defines the 'view')
     - can be applied to multiple views if desired	
     	
- * Dependency Injection (DI)
+* Dependency Injection (DI)
  	changes the purpose of fn arguments:
  		- without DI, args 'receive" objects passed by caller; 
  		- with DI, the fn uses args to demand stuff -> tell AngularJS what it needs
  		
- * Fluent API: multiple calls to methodc are "chained" together:
+* Fluent API: multiple calls to methodc are "chained" together:
  	<script>
  		angular.module("exampleApp", [])
  			.controller("ctrl1", function($scope){
@@ -511,7 +511,7 @@ The Anatomy od an AngularJS App
  			});
  	</script>
  	
- * Directives
+* Directives
  	- extend & enhance HTML
  	- to create, call:
  		Module.directive(name, factory)
@@ -529,7 +529,7 @@ The Anatomy od an AngularJS App
 		<h4 ng-controller="dayCtrl" highlight="Thursday">
 		(there are other ways)
 	
- * Filters
+* Filters
  	- used in views to format data displayed to user
  	- to create, call:
  		Module.filter(name, factory)
@@ -537,7 +537,7 @@ The Anatomy od an AngularJS App
  		Today is {{day || "(unknown)" | dayName}}
  		day or "unknown" are passed as input to the 'dayName' filter
  
- * Services
+* Services
  	- singleton objects that provide custom functionality throughout application
  	- examples of built-in services: $scope, $filter
  	- created with service, factory or provider methods of Module object
@@ -546,7 +546,7 @@ The Anatomy od an AngularJS App
     		this.tomorrow = this.today + 1;
     	});
   
-  * Defining Values
+* Defining Values
   	- Module.value method:
   		var now = new Date();
   		myApp.value("nowValue", now);
@@ -554,15 +554,15 @@ The Anatomy od an AngularJS App
   		myApp.service("days", function(nowValue) {...
  	- odd but useful?
  	
- * Using Modules to Organize Code
+* Using Modules to Organize Code
  	- good way to divide functionality
  	- need to put "helper" modules in the dependency list ([]) of main module
  	- order not importand, AngularJS will resolve the dependencies properly
  	- can be defined in separate .js files and included with <script src="filename"></script>, OR
  		in the same file as the main application module
  	
- * Module Life Cycle
- 	- Module.config: arg is a function invoked after the module has been loaded
+* Module Life Cycle
+	- Module.config: arg is a function invoked after the module has been loaded
  	- Module.run: arg is a function invoked after ALL modules have been loaded
  	- ex: 	.config(function(){
  				console.log("Config called");
@@ -574,3 +574,95 @@ The Anatomy od an AngularJS App
  		> subs' config will execute before main's config;
  		> subs' run will execute after all configs but before main's run
  		(generally, in order of loading)
+ 		
+ CHAPTER 10
+ Using Binding & Template Directives
+ 
+* Directives:
+	- AngularJS most powerful feature
+	- extend HTML to create rich & complex web applications
+ 
+* Commonly used directives:
+ - create one-way binding					define properties on $scope, use ng-bind, ng-bind-template directive, or inline {{...}}
+ - prevent processing of inline binding		ng-non-bindable
+ - create two-way binding					ng-model
+ - generate repeated elements				ng-repeat
+ - get context info on ng-repeat's current object	use built-in variables like $first, $last
+ - read multiple top-level attributes		ng-repeat-start, ng-repeat-end
+ - load partial view						ng-include
+ - conditionally display elements			ng-switch
+ - hide inline telmplate expr while AngJS is processing content (???)	ng-cloak
+ 
+* Data Binding Directives
+ (All can be applies as attribute or class)
+ ng-bind			binds innerText property of HTML element
+ ng-bind-html		binds innerHTML property of HTML element (can be dangerous?)
+ ng-bind-template	same as ng-bind but allows for mult template expressions in the attribute value (?)
+ ng-model			creates two-way data binding (applicable to input, textarea & select elements)
+ nd-non-bindable	declares region where no data binding will be performed
+ 
+	Applying as attribute:
+ 	There are <span ng-bind="todos.length"></span> items
+ 	Applying as class:
+ 	There are <span class="ng-bind: todos.length"></span> items
+
+* Template Directives
+ 	Used to generate HTML elements using templates, good for working with collectoins
+ (Application: A - attribute, C - class, E - element)
+ ng-cloak			A,C		applies CSS style that hides inline binging expressions
+ ng-include			E,A,C	loads, processes and inserts an HTML fragment into the DOM
+ ng-repeat			A,C		generates copies of single element for each object in array or properto on object
+ ng-repeat-start	A,C		start of repeating section with multiple top-level elements
+ ng-end				A,C		end of repeating section with multiple top-level elements
+ ng-switch			E,A		changes elements in the DOM based on value of data bindings
+ 
+* ng-repeat
+ - ng-repeat can be used to iterate through items in array, or properties in object
+ - ng-repeat can also work with key/value pairs (props: propname/propvalue, arrays: index/value)
+ 	<tr ng-repeat="item in collection">
+ 		<td ng-repeat=(key,value) in item">
+ 			{{key}}={{value}}
+ 		</td>
+ 	</tr>
+ - has built-in variables:
+ $index		position of current item or property
+ $first		true if current item is first in collection
+ $middle	true if current item is neither first nor last in collection
+ $last		true if current item is last in collection
+ $even		true for even-numbered items in collection
+ $odd		true for odd-numbered items in collection
+ 
+* ng-repeat-start and ng-repeat-end
+  - allow for multiple top-level elements to be repeated for each item in collection, e.g., table rows <tr>
+  - the start and end directives act like opening and closing braces that enclose all elements to be generated for a single item
+ 
+* ng-include
+  - adds content from a separate HTML file to the main file's DOM
+  - useful for partial views
+  - 3 configuration params:
+  	src			src="'filename'"	<- notice single quotes inside double quotes!
+  	onload		expression to evaluate when content is loaded
+  	autoscroll	scroll the viewport when content is loaded
+
+	ex: as element:
+		<ng-include src="viewFile()" onload="reportChange()"></ng-include>
+		as attribute:
+		<div ng-include="viewFile()" onload="reportChange()"></div> 	
+
+* ng-switch
+  - allows for conditionally displaying partial views for multiple cases
+    ex: <div ng-switch on="data.mode">
+			<div ng-switch-when="Table">
+				<ng-include src="'views/table.html'"></ng-include>
+			</div>
+			<div ng-switch-when="List">
+				<ng-include src="'views/list.html'"></ng-include>
+			</div>
+			<div ng-switch-default>
+				Select table or list to display data 
+			</div>
+		</div>
+		
+* ng-cloak
+  - used as attribute for elements that have inline bingdings, to prevent {{...}} from showing on screen when content is loaded
+  - not a problem on fast browsers 

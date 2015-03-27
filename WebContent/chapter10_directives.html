@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html ng-app="exampleApp">
+<head>
+	<meta charset="ISO-8859-1">
+	<title>Directives</title>
+    <script src="angular.js"></script>
+    <link href="bootstrap.css" rel="stylesheet" />
+    <link href="bootstrap-theme.css" rel="stylesheet" />
+    <script>
+    	angular.module("exampleApp", [])
+    	.controller("defaultCtrl", function($scope){
+    		$scope.todos = [
+    			{action: "Get groceries", complete: false},
+    			{action: "Call plumber", complete: false},
+    			{action: "Buy running shoes", complete: true},
+    			{action: "Buy flowers", complete: false},
+    			{action: "Call family", complete: false}
+    		];
+    		
+    		$scope.viewFile = function(){
+    			return $scope.showlist ? "views/list.html" : "views/table.html";
+    		};
+    		
+    		$scope.reportChange = function(){
+    			console.log("Displayed content: " + $scope.viewFile());
+    		};
+    		
+    		$scope.data = {};
+    	});
+    </script>
+    <style>
+    	.odd {background-color: lightcoral}
+    	.even {background-color: lightblue}
+    </style>
+</head>
+<body>
+	<div id="todoPanel" class="panel" ng-controller="defaultCtrl">
+		<h3 class="panel-header">To Do List</h3>
+		<!-- one-way data bindings 
+		<div>There are {{todos.length}} items</div>
+		<div>There are <span ng-bind="todos.length"></span> items</div>
+		<div ng-bind-template="First: {{todos[0].action}}. Second: {{todos[1].action}}"></div>
+		<div>First: {{todos[0].action}}. Second: {{todos[1].action}}</div>
+		<div ng-non-bindable>AngularJS uses {{ and }} characters for templates</div>
+		-->
+		
+		<!-- two-way data binding: 
+		<div class="well">
+			<div>The first item is: {{todos[0].action}}</div>
+		</div>
+		
+		<div class="form-group well">
+			<label for="firstItem">Set first item:</label>
+			<input name="firstItem" class="form-control" ng-model="todos[0].action" />
+		</div>
+		-->
+		
+		<!-- using simple ng-incude directive as element, to add partial view; must keep closing tag separate!!! -->
+		<!-- <ng-include src="'views/table.html'"></ng-include> -->
+		
+		<!-- more sophisticated include -->
+		<div class="well">
+			<div class="checkbox">
+				<label>
+					<input type="checkbox" ng-model="showlist">
+					Use the list view
+				</label>
+			</div>
+		</div>
+		<!-- ng-include as element: -->
+		<!-- <ng-include src="viewFile()" onload="reportChange()"></ng-include> -->
+		<!-- ng-include as attribute: -->
+		<div ng-include="viewFile()" onload="reportChange()"></div>
+		
+		<!-- ng-switch example: -->
+		<div class="well">
+			<div class="radio" ng-repeat="button in ['None', 'Table', 'List']">
+				<label>
+					<input type="radio" ng-model="data.mode" value="{{button}}" ng-checked="$first" />
+					{{button}}
+				</label>
+			</div>
+		</div>
+		<div ng-switch on="data.mode">
+			<div ng-switch-when="Table">
+				<ng-include src="'views/table.html'"></ng-include>
+			</div>
+			<div ng-switch-when="List">
+				<ng-include src="'views/list.html'"></ng-include>
+			</div>
+			<div ng-switch-default>
+				Select table or list to display data 
+			</div>
+		</div>
+				
+		<!-- demo of ng-repeat-start and ng-repeat-end
+		<table>
+			<tbody>
+				<tr ng-repeat-start="item in todos">
+					<td>This is item {{$index}}</td>
+				</tr>
+				<tr>
+					<td>The action is: {{item.action}}</td>
+				</tr>
+				<tr ng-repeat-end>
+					<td>Item {{$index}} is {{item.complete ? '' : "not "}}complete</td>
+				</tr>
+			</tbody>
+		</table>
+		-->
+	</div>
+</body>
+</html>

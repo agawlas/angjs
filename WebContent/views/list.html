@@ -1,0 +1,8 @@
+<!-- <ol> is ordered list -->
+<ol>
+	<!-- <li> - list item -->
+	<li ng-repeat="item in todos">
+		{{item.action}}
+		<span ng-if="item.complete"> (Done)</span>
+	</li>
+</ol>
