@@ -665,4 +665,108 @@ The Anatomy of an AngularJS App
 		
 * ng-cloak
   - used as attribute for elements that have inline bingdings, to prevent {{...}} from showing on screen when content is loaded
-  - not a problem on fast browsers 
+  - not a problem on fast browsers
+  
+CHAPTER 11
+Using Element and Event Directives
+
+* More directives:
+  - show or hide elements						ng-show, ng_hide
+  - remove elements from DOM					ng-if
+  - avoid transclusion problem when generating	ng-repeat
+    elements that can't have intermediate
+    parent element (???)
+  - assign elements to classes or				ng-class or ng-style
+    set individual CSS style properties
+  - assign different classes to odd/even		ng-class-odd, ng-class-even
+    elements from ng-repeat
+  - define behavior for event					event directive (e.g., ng-click)
+  - handle event for which AngularJS			custom event directive
+    does not provide directive
+  - apple boolean attibutes to elements			boolean attribute directive (e.g., ng-checked)
+  
+* Element directives:
+ng-if			A		adds & removes elements from DOM
+ng-class		A,C		sets class attribute for element
+ng-class-even	A,C		sets class attr for even-numbered elems from ng-repeat
+ng-class-odd	A,C		sets class attr for even-numbered elems from ng-repeat
+ng-hide			A,C		shows/hides elements in the DOM
+ng-show			A,C		shows/hides elements in the DOM
+ng-style		A,C		sets one or more CSS properties
+
+* ng-show/ng-hide
+  - only hide elements
+  - can be used with ng-repeat, BUT
+  - if stuff hidden - row indexing & striping in tables don't work correctly
+  
+* ng-if
+  - syntax: ng-if="condition", if condition is true - element is removed from DOM
+  - cannot be used for the same element with ng-repeat (transclusion - they both try to modify child element and AngJS doesn't know how to handle it)
+    > possible solution - use filter:
+      <tr ng-repeat="item in todos | fiter: {complete: 'false'}">...</tr>
+      
+* Classes & CSS Styles
+  - ng-class -> assign elements to classes
+    ex: <tr ng-repeat="item in todos" ng-class="settings.Rows">
+  - ng-style - set individual CSS properties
+    ex: <td ng-style="{'background-color': settings.Columns}">
+  - similar applications; prefer ng-class -> changes applied automatically
+
+* Odd & Even Classes
+  - ng-class-odd / ng-class-even
+  - similar to using $odd and $even built-in ng-repeat variables
+  
+* Event Directives
+  - specify custom behavior when different HTML events are triggered
+  - all can be used as attribute or class
+  ng-blur			'blur' event (when element loses focus)
+  ng-change			'change' event (when element's state of content changes (checkbox is checked, text in input element edited, ...)
+  ng-click			'click' event (user clicks a mouse/pointer)
+  ng-copy			'copy" event
+  ng-cut			'cut' event
+  ng-paste			'paste' event
+  ng-dblclick		'dblclick' event (when user double-clicks mouse/pointer)
+  ng-focus			'focus' event (when element gains focus)
+  ng-keydown		3 key events
+  ng-keypress		...
+  ng-keyup			...
+  ng-mousedown		6 mpose/pointer events
+  ng-mouseenter		...
+  ng-mouseleave		...
+  ng-mouseemove		...
+  ng-mouseover		...
+  ng-mouseup		...
+  ng-submit			'submit' event (when a form is submitted)
+  
+* invoked:
+  - inline (OK to use if simple):
+    <button class="btn btn-info" ng-click="data.rowColor = button">
+  - by calling controller function (preferred):
+    $scope.handleEvent = function(e){
+    			console.log("Event type: " + e.type);
+    			$scope.data.columnColor = e.type == "mouseover" ? "Green" : "Blue";
+    			console.log("Column color: " + $scope.data.columnColor);
+    };
+    (...)
+    <tr ng-repeat="item in todos" ng-class="data.rowColor"
+				ng-mouseenter="handleEvent($event)">
+				
+* custom directives can be created for events that AngularJS does nor provide handlers (e.g., touchstart, touchend)
+
+* boolean attribute directives
+  - some issues with assigning values to them (not sure why?
+    e.g., disabled attribute cannot be wet to false to enable an element, like a button (???)
+    the directives solve this problem
+  - these directives can only be used as attributes:
+  
+  ng-checked		manages 'checked' attr (used on 'input' elements)
+  ng-disabled		manages 'disabled' attr (input & button)
+  ng-open			manages 'open' attribute (details)
+  ng-readonly		manages 'readonly' (input)
+  ng-selected		manages 'selected' (option)
+
+* directives for managing other attributes
+  (can only be used as attributes)
+ng-href			sets href attr on 'a' elements
+ng-src			sets img attr on 'img' elements
+ng-srcset  		sets srcset attr on 'img' elements (new in HTML5, for setting multiple images depending os display size/resolution)

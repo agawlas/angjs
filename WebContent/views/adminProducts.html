@@ -7,7 +7,7 @@
 <div ng-controller="productCtrl">
 	<table id="productTable" class="table table-striped table-bordered">
 		<tr>
-			<th>Name</th><th>Description</th><th?Category</th><th>Price</th><th></th>
+			<th>Name</th><th>Description</th><th>Category</th><th>Price</th><th></th>
 		</tr>
 		<tr ng-repeat="item in products" ng-hide="item.id == editedProduct.id">
 			<td>{{item.name}}</td>
