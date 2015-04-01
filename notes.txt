@@ -770,3 +770,170 @@ ng-style		A,C		sets one or more CSS properties
 ng-href			sets href attr on 'a' elements
 ng-src			sets img attr on 'img' elements
 ng-srcset  		sets srcset attr on 'img' elements (new in HTML5, for setting multiple images depending os display size/resolution)
+
+CHAPTER 12
+Working with Forms
+
+* Form-related directives:
+  - create 2-way model binding				ng-model
+  - validate form elements					add 'form' element to document and apply 'novalidate" attr;
+  											use special vars ($valid) to assess validity of elements or entire form
+  - visual feedback on validation			AngularJS validation CSS classes (??)
+  - provide text validation cues			special validation vars ($valid), with other directives like ng-show
+  - defer validation feedback				add variable that latches validation feedback (??)
+  - complex validation on 'input' elems		use additional AngularJS attrs (??)
+  - sontrol value of model property when using check box		ng-true-value/ng-false-value (attrs)
+  - validate 'textarea' element				use additional AngularJS attrs (??)
+  - generate 'option' elems for 'select' elem		ng-options (attr)
+  
+* Using form elems with 2-way data bindings
+  ex: <td>
+		<input type="checkbox" ng-model="item.complete" />
+	  </td>
+
+  - Implicitly creating model properties
+    > can use 2-way data bindings for that
+	> when you retrieve or assign value to nonexistent object or property -> no errors; AngJS will create
+	  an 'implicitly defined' property or object.
+	 ex: <div class="form-group row">
+			<label for="actionText">Action:</label>
+			<input id="actionText" class=form-control" ng-model="newTodo.action">	<-- text input
+		 </div>
+		 <div class="form-group row">
+			<label for="actionLocation">Location:</label>
+			<select id="actionLocation" class="form-control" ng-model="newTodo.location">	<-- drop-down list
+				<option>Home</option>
+				<option>Office</option>
+				<option>Mall</option>
+			</select>
+		 </div>
+	> sometimes can get an error:
+	  TypeError: Cannot read property 'action' of undefined
+	  if form controls (input, select) have not been modified (because the objects will not be defined).
+	  To avoid: check that they exist using angular.isdefined method.
+
+* Validating forms
+  - form element is not required for 2-way binding, but it IS required for validation
+  - form element's 'novalidate' attribute disables browser validation and enables AngularJS validation features
+  - specify element's 'name' attribute if want to vlidate
+  - specify 'type' attribute to tell what kind of element it is (it will imply type of validation)
+    HTML5 'type' attribute values that AngJS can validate:
+    checkbox		checkbox (pre-HTML5)
+    email			text input that accepts e-mail addreses (new in HTML5)
+    number			text input that accepts number (new in HTML5)
+    radio			radio button (pre-HTML5)
+    text			standard text input for any value (pre-HTML5)
+    url				text input that accepts URL (new in HTML5)
+  - use 'required' attr to tell the form value must be supplied
+  - monitoring validity of form
+    > with validation variables:
+    $pristine		true if no user interaction
+    $dirty			true if user has interacted w/form
+    $valid			true if contents are valid
+    $invalid		true if contents are invalid
+    $error			details of validation errors
+    
+* Form validation feedback
+  - has classes that can be combined with CSS to provide feedback bystyling elements
+    ng-pristine		elements not touched by user are added to this class
+    ng-dirty		elements that user interacted with are added here
+    ng-valid		valid elements are in this class
+    ng-invalid		invalid elements go here
+  - elements added/removed to/from classes after every interaction
+  - ex:
+    <style>
+    	form .ng-invalid.ng-dirty {background-color: lightpink;}
+    	form .ng-valid.ng-dirty {background-color: lightgreen;}
+    	span.summary.ng-invalid {color: red; font-weight: bold;}
+    	span.summary.ng-valid {color: green;}
+    </style>
+    
+* Feedback for cpecific validation constraints
+  - similar to above, with more specific classes:
+  		form .ng-invalid-required.ng-dirty {background-color: lightpink;}
+    	form .ng-invalid-email.ng-dirty {background-color: lightgoldenrodyellow;}
+  - use carefully to mot produce conflicting results for different constraints
+
+* Using the Special Variables to provide feedback
+  - here, $error with ng-show directive; $error hasproperties for all constraints applied to element (email & required)
+  ex: <div class="error" ng-show="myForm.userEmail.$invalid && myForm.userEmail.$dirty">
+		<span ng-show="myForm.userEmail.$error.email">
+			Please enter a valid e-mail address
+		</span>
+		<span ng-show="myForm.userEmail.$error.required">
+			Please enter your e-mail address
+		</span>
+	  </div>
+	  
+* Reducing the number of feedback elements
+  - generate feedback in a controller function:
+  			$scope.getError = function(error){
+    			if (angular.isDefined(error)){
+    				if (error.required){
+    					return "Please enter a value";
+    				} else if (error.email){
+    					return "Please enter a valid e-mail address";
+    				}    				
+    			}
+    		}
+  - call when checking for errors:
+  		<div class="error" ng-show="myForm.userEmail.$invalid && myForm.userEmail.$dirty">
+			{{getError(myForm.userEmail.$error)}}
+		</div>
+		
+* Deferring validation feedback
+  - can defer until form submitted, define & use $scope property 'showValidation' and show conditionally with ng-show
+  
+* Using form directive attributes
+  - "replace" (?) standard form elements such as 'form', 'input', 'select'
+  - support optional attributes to integrate with AngJS
+  - attributes for 'input' elements
+  	can only be used if 'type' attr not specified, or if 'type' is text, url, email or number
+  	ng-model		two-way model binding
+  	ng-change		provides expression evaluated when element contents change
+  	ng-minlength	min # of chars required for element to be valid
+  	ng-maxlength	max ...
+  	ng-pattern		sets regex that the element's contents must match
+  	ng-required		sets value of 'required' attr with a data binding (?)
+  	> ex: <div class="form-group">
+			<label>Text:</label>
+			<input name="sample" class="form-control" ng-model="inputValue"
+				ng-required="requireValue" ng-minlength="3"
+				ng-maxlength="10" ng-pattern="matchPattern">
+	      </div>
+  	> don't use ng-pattern when type is url, email or number - AngJS sets it itself!!!
+  - attributes for type="checkbox'
+    ng-model		two-way binding
+    ng-change		provides expression evaluated when element contents change
+    ng-true-value	value that the model binging expr will be set to when checked
+    ng-false-value	value that the model binging expr will be set to when unchecked
+    > ex: <label>
+			<input name="sample1" type="checkbox" ng-model="inputValue1" 
+				ng-true-value="'Hurrah!'" ng-false-value="'Boo!'">
+			This is a checkbox 
+		  </label>
+  - attributes for 'textarea' elements
+    same as for 'input' element
+    > ex: <div class="form-group">
+			<textarea name="sample" cols="40" rows="3" ng-model="textValue"
+				ng-required="requireValue" ng-minlength="3"
+				ng-maxlength="10" ng-pattern="matchPattern">
+	      </div>
+  - using 'select' elements
+    important: ng-options
+    > format: <label> for <variable> in <array>
+    > ex: <select ng-model="selectValue" ng-options="item.action for item in todos"></select>
+    > to define option for undefined use 'option' element:
+    	<select ng-model="selectValue" ng-options="item.action for item in todos">
+			<option value="">(Pick one)</option>
+		</select>
+    > to change the selection value (instead of entire item) - use format:
+    	<selected property> as <label> for <variable> in <array>
+      ex: <select ng-model="selectValue" ng-options="item.id as item.action for item in todos">
+			<option value="">(Pick one)</option>
+		  </select>
+	> creating optgroup elements (aka grouping options in drop-down by item's property) - use format:
+		<label> group by <property> for <variable> in <array>
+	  ex: <select ng-model="selectValue" ng-options="item.action group by item.place for item in todos">
+			<option value="">(Pick one)</option>
+		  </select>
