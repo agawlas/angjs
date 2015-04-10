@@ -937,3 +937,97 @@ Working with Forms
 	  ex: <select ng-model="selectValue" ng-options="item.action group by item.place for item in todos">
 			<option value="">(Pick one)</option>
 		  </select>
+
+CHAPTER 13
+Using Controllers and Scopes
+
+* Summary
+  - create a controller				Module.controller method (to define), ng-controller directive (to apply to HTML element)
+  - add data & behavior to scope	declare dependency on $scope service, create (assign) properties in controller factory fn
+  - create monolithic controller	apply ng-controller dir to 'body' elem, use factory fn to define data and behavior
+  - reuse a controller				apply ng-controller dir to multiple HTML elems
+  - communicate between controllers	send events via the root scope or via service
+  - inherit behavior and data
+    from another controller
+  - create controllers w/o scopes	use scopeless controllers (?)
+  - notify scope about change		use $apply, $watch & $watchCollection methods to inject changes into scope, or monitor scope for changes
+  
+* Controller = link between domain model and view
+  - cannot have AngJS application without one, but can have multiple
+  - Provide data and logic to views through 'scopes'
+
+* To create: 
+  .controller('ctrl_name', functon($scope){
+  	[ctrl code]
+  });
+  - the function is the constructor, aka 'factory fn'
+  - usually uses '$scope' as argument (dependency injection)
+* To apply to element: use ng-controller="ctrl_name" directive as attribute
+  ex: <div class="well" ng-controller="simpleCtrl">
+* To use: define scope's data and/or behaviors (= JS functions that can be called fron the view)
+  ex: $scope.city = "London";
+      $scope.getCountry = function(city){...}
+* To modify the scope: use input elements, like <select> and bind with ng-model to scope's property
+  ex: [in controller: $scope.cities = ["London", "New York", "Paris"];]
+  	  [in HTML/body:]
+  	  <div class="well">
+		<label>Select a city:</label>
+		<select ng-options="city for city in cities" ng-model="city"></select>
+	  </div>
+  (Notice interesting way of using ng-options: "city for city in cities")
+* Organizing controllers:
+  - monolithic controller = use ng-controller on the <body> element
+    > simple, no need for communication between controllers
+    > effectively implies one view for entire application
+    > good for small applications, but not for complex ones
+  - reusing controllers
+    > can reuse the same ctrl with several views in application
+    > each "instance" will have its own scope
+    > allows different views present the same data in different ways
+* Communicating between scopes
+  - use root scope ($rootScope) - available as a service, can be an arg (dependency) in controller function
+  - $scope methods for events:
+    $broadcast(name, args)		sends event from current scope to all child scopes
+    							name - event name, args - event data
+    $emit(name, args)			sends event from current scope up to root scope
+    $on(name, handler)			registerd event handler to invoke when specified event is received
+  - can also use Service -> it will be dependent on $rootScope and colltroller(s) will depend on the service
+    (code reusability / clarity)
+* Controller inheritance
+  - How to do:
+    > use ng-controller directive to apply controller1 to an element
+    > use ng-controller directive to apply controller2 to its sub-element
+    > controller2 will inherit from controller1 (controller1 == parent, controller2 == child)
+  - Functions/data defined in "parent" controller are inherited by "child"
+  - Child can override a function or add a function
+  - Data inheritance:
+  	> Using "plain data":
+  	  $scope.data = "Hello, Adam";
+  	  will cause duplication of data for child controllers (child will end up with its own copy of the scope data).
+  	  Then bind/refer to it like this: ng-model="data", $scope.data
+  	> Using objects as scope data:
+  	  $scope.data = {dataValue: "Hello, Adam"};
+  	  will cause only one copy of the data (object).
+  	  Then bind/refer to it like this: ng-model="data.dataValue", $scope.data.dataValue
+  	> Can serve both scenarios (sometimes useful)
+  	> Caused by "prototype inheritance" in JS (??)
+* Scopeless controllers
+  - new in AngularJS
+  - To create: use ng-controller="[controller-to-apply] as [variable-name]" as element attribute
+    ex: <div class="well" ng-controller="simpleCtrl as ctrl">
+  - to use: refer to it by the variable-name:
+  	ex: <input class="form-control" ng-model="ctrl.dataValue">
+  - in controller function definition:
+    > don't declare $scope as arg
+    > use "this" to create data/methods
+      ex: this.dataValue = "Hello, Adam";
+    	  this.reverseText = function(){
+    			this.dataValue = this.dataValue.split("").reverse().join("");
+    	  }
+* Explicitly updating the scope
+  - useful when need to use AngularJS with other frameworks (like jQuery)
+  - 3 $scope methods:
+    $apply(expression)					applies a change to the scope
+    $watch(expression, handler)			registers a handler to call when 'expression' value changes
+    $watchCollection(object, handler)	registers a handler to call when any props of "object" change
+
