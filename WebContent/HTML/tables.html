@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="ISO-8859-1">
+	<title>HTML Tables</title>
+	<style type="text/css">
+		td, th {border: 1px solid #CCC; }
+		table {border: 1px solid black; }
+	</style>
+</head>
+<body>
+	<!-- Table Challenge -->
+	<table>
+		<caption><b>The Table Challenge</b></caption>
+		<tr>
+			<th rowspan="2"></th>
+			<th colspan="2">A common header for two subheads</th>
+			<th rowspan="2">Header 3</th>
+		</tr>
+		<tr>
+			<th>Header 1</th>
+			<th>Header 2</th>
+		</tr>
+		<tr>
+			<th scope="row">Thing A</th>
+			<td>data A1</td>
+			<td>data A2</td>
+			<td>data A3</td>
+		</tr>
+		<tr>
+			<th scope="row">Thing B</th>
+			<td>data B1</td>
+			<td>data B2</td>
+			<td>data B3</td>
+		</tr>
+		<tr>
+			<th scope="row">Thing C</th>
+			<td>data C1</td>
+			<td>data C2</td>
+			<td>data C3</td>
+		</tr>
+	</table>
+	<hr>
+	<!-- 1st table: The BEatles albums: -->
+	<table>
+		<caption>The Beatles Albums</caption>
+		<tr>
+			<th>Album</th>
+			<th>Year</th>
+		</tr>
+		<tr>
+			<td>Rubber Soul</td>
+			<td>1965</td>
+		</tr>
+		<tr>
+			<td>Revolver</td>
+			<td>1966</td>
+		</tr>
+		<tr>
+			<td>Sgt. Pepper</td>
+			<td>1967</td>
+		</tr>
+		<tr>
+			<td>The White Album</td>
+			<td>1968</td>
+		</tr>
+		<tr>
+			<td>Abbey Road</td>
+			<td>1969</td>
+		</tr>
+	</table>
+	<hr>
+	<!-- 2nd table: TV program (column span) -->
+	<table>
+		<caption>TV Program</caption>
+		<tr>
+			<th>7:00pm</th>
+			<th>7:30pm</th>
+			<th>8:00pm</th>
+		</tr>
+		<tr>
+			<td colspan="3">The Sunday Night Movie</td>
+		</tr>
+		<tr>
+			<td>Perry Mason</td>
+			<td>Candid Camera</td>
+			<td>What's My Line</td>
+		</tr>
+		<tr>
+			<td>Bonanza</td>
+			<td colspan="2">The Wackiest Ship in the Army</td>
+		</tr>
+	</table>
+	<hr>
+	<!-- 3rd table: serving size (row span) -->
+	<table>
+		<caption>Serving Sizes</caption>
+		<tr>
+			<th rowspan="3">Serving Size</th>
+			<td>Small (8oz.)</td>
+		</tr>
+		<tr>
+			<td>Medium (16oz.)</td>
+		</tr>
+		<tr>
+			<td>Large (24 oz.)</td>
+		</tr>
+	</table>
+	<hr>
+	<!-- 4th table: fruit (also row span) -->
+	<table>
+		<caption>Fruit</caption>
+		<tr>
+			<td>apples</td>
+			<td rowspan="3">oranges</td>
+			<td>pears</td>
+		</tr>
+		<tr>
+			<td>bananas</td>
+			<td rowspan="2">pineapple</td>
+		</tr>
+		<tr>
+			<td>lychees</td>
+		</tr>
+	</table>
+</body>
+</html>

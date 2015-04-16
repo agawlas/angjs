@@ -1031,3 +1031,107 @@ Using Controllers and Scopes
     $watch(expression, handler)			registers a handler to call when 'expression' value changes
     $watchCollection(object, handler)	registers a handler to call when any props of "object" change
 
+CHAPTER 14
+Using Filters
+
+* To format or sort data, without modifying the original data in the scope
+* How to use:
+  Single-value filters:
+  - format currency value				'currency' filter
+  - format general numeric value		'number' filter
+  - format date							'date' filter
+  - change case of string				'uppercase' / 'lowercase' filter
+  - generate JSON representation of JS object	'json' filter
+  Localizing filter output:
+  - localize formatting produced by		add angularjs localization file to HTML doc via 'script'
+    currency, number or date filter
+  Collection filters:
+  - select limited # of objects from array		'limitTo' filter
+  - select objects in array				'filter' filter
+  - sort objects in array				'orderBy' filter
+  Misc/advanced:
+  - combine multiple filters			use filter chaining
+  - create custom filter				use Module.filter to specify factory fn that generates worker fn
+  										that will perform data formatting or transformation
+  - create filter that uses other filters		declare dependencyon $filter service in custom
+  												filter factory fn, use the service to invoke desired filters
+* 'currency' filter:
+  - to use: ... | currency
+  - ex: <td class="text-right">{{p.price | currency}}</td>
+  - ex with currency symbol: <td class="text-right">{{p.price | currency:"PLN"}}</td>
+* 'number' filter
+  - to use: ... | number[:options]
+  - ex: <td class="text-right">${{p.price | number:0}}</td> <-- will display with no decimals
+* 'date' filter
+  - to use: ... | date[:"date-format-string"]
+  - formatting:
+  yyyy		4-digit year
+  yy		2-digit year
+  MMMM		full month name (January)
+  MMM		short month name (Jan)
+  MM		2-digit month
+  M			1- or 2-digit month
+  dd		2-digit day
+  d			1- or 2-digit day
+  EEEE		full name of day (Tuesday)
+  EEE		short name of day (Tue)
+  HH		hour, 2-digit, 24h clock
+  H			hour, 1- or 2-digit, 24h clock
+  hh		hour, 2-digit, 12h clock
+  h			hour, 1- or 2-digit, 12h clock
+  mm		minutes, 2-digit
+  m			monutes, 1- or 2-digit
+  ss		seconds, 2-digit
+  s			seconds, 1- or 2-digit
+  a			am/pm marker
+  Z			4-char repsesentation of time zone
+  -----
+  medium		MMM d, y h:mm:ss a
+  short			M/d/yy h:mm a
+  fullDate		EEEE, mmmm d,y
+  longDate		MMMM d, y
+  mediumDate	mmm d, y
+  shortDate		M/d/yy
+  mediumTime	h:mm:ss a
+  shortTime		h:mm a
+  
+* 'uppercase' / 'lowercase' filter
+  - to use: ... | uppercase
+* 'json' filter
+  - to use: ... | json
+  - produces JSON output for JS object, e.g.:
+    {"name": "Apples", "category": "Fruit", "price": 1.2, "expiry": 10}
+* Localizing filter output:
+  - add localizing script in <head> section:
+    <script src="angular-locale_fr-fr.js"></script>
+* 'limitTo' filter
+  - to use: ... | limitTo:[number-expr]
+  - ex: <tr ng-repeat="p in products | limitTo:limitVal">
+  - if limitVal is < 0 --> will show the LAST limitVal elements in collection
+* 'filter' filter
+  - to use: ... | filter:{prop-name: prop-value}
+  - ex: <tr ng-repeat="p in products | filter:{category: 'Fish'} ">
+  - or, using a function:
+    			$scope.selectItems = function(item){
+                	return item.category == "Fish" || item.name == "Beer";
+                }
+    	(...)
+   		<tr ng-repeat="p in products | filter:selectItems ">
+* 'orderBy' filter
+  - to use: ... | orderBy: 'prop-name'
+  - ex: <tr ng-repeat="p in products | orderBy:'price'">
+  - for property name, use single quotes; if not used - will assume a scope variable and fail if not defined
+  - order: ascending by default. + asc, - desc, ex: orderBy:'-price'
+  - or, using a function:
+  	<tr ng-repeat="p in products | orderBy:customSorter">
+  - or by multiple criteria:
+    <tr ng-repeat="p in products | orderBy:[customSorter, '-price']">
+* chaining filters
+  - combining filters together
+  - how: use |, e.g.: <!--  <tr ng-repeat="p in products | filter:selectItems | orderBy:'-price'">
+* to call a filter in JS (system or custom), e.g., when combining functionality:
+  $filter("skip")(data, args for 'skip' filter)
+  $filter("limitTo")(data, count)
+* to apply filter with arguments - use ':'
+  - ex: <tr ng-repeat="p in products | take:3:5">
+  	> used a 'take' custom filter with 2 args, 3 & 5
